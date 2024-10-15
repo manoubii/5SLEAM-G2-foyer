@@ -14,13 +14,22 @@ import java.util.Set;
 @ToString
 public class Chambre {
 
+
+
+    private Double prixParNuit;
+    private boolean reservee;
+    private Integer capacite; // Capacité d'accueil de la chambre
+    private Integer colocatairesActuels;
+    private boolean serviceRepasInclus;
+    private boolean accesSalleSport;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idChambre;
 
     private String numeroChambre;
     private boolean estDisponible;  // Assurez-vous que cette propriété existe
-    private int capacite;
+
 
     @ManyToMany
     @JoinTable(

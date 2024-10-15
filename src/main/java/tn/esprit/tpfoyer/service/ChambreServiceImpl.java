@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import tn.esprit.tpfoyer.entity.Chambre;
 import tn.esprit.tpfoyer.entity.TypeChambre;
 import tn.esprit.tpfoyer.repository.ChambreRepository;
+import tn.esprit.tpfoyer.entity.Etudiant;
+
 
 import java.util.List;
 
@@ -66,5 +68,23 @@ public class ChambreServiceImpl implements IChambreService {
         notificationService.envoyerNotification(chambre);
 
         return "Chambre réservée avec succès.";
+    }
+
+    // Placez la méthode ici, à l'intérieur de la classe
+    public String ajouterColocataire(Long chambreId, Etudiant etudiant) {
+        // Récupérer la chambre
+        Chambre chambre = chambreRepository.findById(chambreId)
+                .orElseThrow(() -> new IllegalArgumentException("Chambre non trouvée"));
+
+        // Vérifier si la chambre est complète
+        if (chambre.getColocatairesActuels() >= chambre.getCapacite()) {
+            throw new IllegalArgumentException("La chambre est complète.");
+        }
+
+        // Ajouter un colocataire
+        chambre.setColocatairesActuels(chambre.getColocatairesActuels() + 1);
+        chambreRepository.save(chambre);  // Sauvegarder la mise à jour dans la base de données
+
+        return "Colocataire ajouté avec succès.";
     }
 }
