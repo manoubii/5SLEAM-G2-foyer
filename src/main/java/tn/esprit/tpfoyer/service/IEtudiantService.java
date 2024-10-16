@@ -12,6 +12,9 @@ public interface IEtudiantService {
     public void removeEtudiant(Long etudiantId);
     public Etudiant modifyEtudiant(Etudiant etudiant);
     public Etudiant recupererEtudiantParCin(long cin);
+    public List<Etudiant> findDuplicatesByCin(long cin);
+    public List<Etudiant> findDuplicatesByName(String nomEtudiant, String prenomEtudiant);
+    public List<Etudiant> findPotentialDuplicates(Etudiant etudiant);
 
 
 }
