@@ -95,7 +95,7 @@ class UniversiteServiceImplTest {
         universiteService.deleteAllUniversities();
 
         // Then
-        verify(universiteRepository, times(1)).deleteAllUniversites(); // Verify the custom method is called
+        verify(universiteRepository, times(1)).deleteAllUniversities();// Verify the custom method is called
     }
 }
 

@@ -45,7 +45,7 @@ public class UniversiteServiceImpl implements IUniversiteService {
     //My deleteAllUniversites methode
     @Override
     public void deleteAllUniversities() {
-        universiteRepository.deleteAllUniversites();
+        universiteRepository.deleteAllUniversities();
     }
 
 
