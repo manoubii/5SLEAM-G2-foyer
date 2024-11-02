@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import tn.esprit.tpfoyer.entity.Etudiant;
 import tn.esprit.tpfoyer.repository.EtudiantRepository;
 
@@ -15,8 +16,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+
 @ExtendWith(MockitoExtension.class)
-class EtudiantServiceImplMockitoTest {
+@SpringBootTest
+ class EtudiantServiceImplMockitoTest {
 
     @Mock
     EtudiantRepository etudiantRepository;
@@ -51,18 +54,20 @@ class EtudiantServiceImplMockitoTest {
 
         List<Etudiant> result = etudiantService.findDuplicatesByCin(11428675);
 
-        assertEquals(2, result.size()); // Both etudiant1 and etudiant2 have the same CIN
+        assertEquals(2, result.size());
+        System.out.println("Expected: " + 2 + ", Actual: " + result.size());
     }
 
-    //@Test
-    //void testFindDuplicatesByName() {
-      //  when(etudiantRepository.findAll()).thenReturn(etudiantList);
+    @Test
+    void testFindDuplicatesByName() {
+        when(etudiantRepository.findAll()).thenReturn(etudiantList);
 
-        //List<Etudiant> result = etudiantService.findDuplicatesByName("Doe", "John");
+        List<Etudiant> result = etudiantService.findDuplicatesByName("Lahbib", "Manoubi");
 
-        //assertEquals(1, result.size());
-        //assertEquals("John", result.get(0).getNomEtudiant());
-    //}
+        assertEquals(2, result.size());
+        System.out.println("Expected: " + 2 + ", Actual: " + result.size());
+
+    }
 
     @Test
     void testFindPotentialDuplicates() {
@@ -71,6 +76,6 @@ class EtudiantServiceImplMockitoTest {
         List<Etudiant> result = etudiantService.findPotentialDuplicates(etudiant1);
 
         assertEquals(1, result.size()); // Only etudiant2 should be found as a duplicate
-        //assertEquals("Jane", result.get(0).getNomEtudiant());
+        System.out.println("Expected: " + 1 + ", Actual: " + result.size());
     }
 }
