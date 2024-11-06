@@ -3,32 +3,54 @@ version: '3.8'
 services:
   # MySQL Database Service
   mysql:
-    image: mysql:8.0                 # MySQL version 8.0
+    image: mysql:8.0
     environment:
-      MYSQL_DATABASE: foyerdb         # Database name
+      MYSQL_DATABASE: foyerdb
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
     ports:
-      - "3306:3306"                   # Expose MySQL port
+      - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql     # Persist MySQL data
+      - mysql_data:/var/lib/mysql
     networks:
-      - foyer-network                 # Custom network for communication
+      - foyer-network
 
   # Spring Boot Application Service
   tp-foyer:
-    image: louaysboui/tp-foyer:5.0.0  # Docker image name for Spring Boot app
+    image: louaysboui/tp-foyer:5.0.0
     depends_on:
-      - mysql                         # Ensure MySQL starts before the app
+      - mysql
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/foyerdb?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:     # Leave this empty to match MySQL config
+      SPRING_DATASOURCE_PASSWORD:
+      MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: true
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: prometheus
     ports:
-      - "8089:8089"                   # Expose the Spring Boot application port
+      - "8089:8089"
+    networks:
+      - foyer-network
+
+  # Prometheus Service
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - foyer-network
+
+  # Grafana Service
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
     networks:
       - foyer-network
 
 volumes:
-  mysql_data:                         # Named volume for MySQL persistence
+  mysql_data:
 
 networks:
-  foyer-network:                      # Custom network to connect both containers
+  foyer-network:
