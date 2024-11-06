@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   # MySQL Database Service
@@ -6,6 +6,7 @@ services:
     image: mysql:8.0                 # MySQL version 8.0
     environment:
       MYSQL_DATABASE: foyerdb         # Database name
+      MYSQL_ROOT_PASSWORD: rootpassword  # Define the root password
     ports:
       - "3306:3306"                   # Expose MySQL port
     volumes:
@@ -14,16 +15,21 @@ services:
       - foyer-network                 # Custom network for communication
 
   # Spring Boot Application Service
-  tp-foyer:
+  projet_final:
+    container_name: projet_final
     image: louaysboui/tp-foyer:5.0.0  # Docker image name for Spring Boot app
+    build: .
     depends_on:
       - mysql                         # Ensure MySQL starts before the app
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/foyerdb?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:     # Leave this empty to match MySQL config
+      SPRING_DATASOURCE_PASSWORD: rootpassword  # Match MySQL root password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_H2_CONSOLE_ENABLED: "true"
+      SPRING_H2_CONSOLE_PATH: /h2-console
     ports:
-      - "8089:8089"                   # Expose the Spring Boot application port
+      - "8082:8082"                   # Expose the Spring Boot application port
     networks:
       - foyer-network
 
