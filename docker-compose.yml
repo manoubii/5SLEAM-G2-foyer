@@ -1,34 +1,42 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # MySQL Database Service
-  mysql:
-    image: mysql:8.0                 # MySQL version 8.0
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
     environment:
-      MYSQL_DATABASE: foyerdb         # Database name
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dbfoyer
     ports:
-      - "3306:3306"                   # Expose MySQL port
+      - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql     # Persist MySQL data
-    networks:
-      - foyer-network                 # Custom network for communication
+      - db_data:/var/lib/mysql
 
-  # Spring Boot Application Service
-  tp-foyer:
-    image: louaysboui/tp-foyer:5.0.0  # Docker image name for Spring Boot app
+  app-foyer:
+    image: louaysboui/tp-foyer:5.0.0
+    container_name: app-foyer
     depends_on:
-      - mysql                         # Ensure MySQL starts before the app
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/foyerdb?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:     # Leave this empty to match MySQL config
+      - mysqldb
     ports:
-      - "8089:8089"                   # Expose the Spring Boot application port
-    networks:
-      - foyer-network
+      - "8089:8089"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/foyer_db?createDatabaseIfNotExist=true",
+        "spring.datasource.username": "root",
+        "spring.datasource.password": ,
+        "spring.jpa.show-sql": "true",
+        "spring.jpa.hibernate.ddl-auto": "update",
+        "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.MySQL8Dialect",
+        "spring.datasource.hikari.maximum-pool-size": "10",
+        "spring.datasource.hikari.minimum-idle": "5",
+        "spring.datasource.hikari.idle-timeout": "60000",
+        "spring.datasource.hikari.connection-timeout": "30000",
+        "spring.datasource.hikari.max-lifetime": "1800000",
+        "server.port": "8089",
+        "server.servlet.context-path": "/tpfoyer",
+        "logging.level.org.springframework": "INFO",
+        "logging.level.root": "INFO"
+      }'
 
 volumes:
-  mysql_data:                         # Named volume for MySQL persistence
-
-networks:
-  foyer-network:                      # Custom network to connect both containers
+  db_data:
